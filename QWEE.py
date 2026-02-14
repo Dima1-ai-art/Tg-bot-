@@ -1,4 +1,24 @@
+import subprocess
+import sys
 import asyncio
+import importlib.util
+
+# === АВТОУСТАНОВКА ЗАВИСИМОСТЕЙ ===
+def install_package(package):
+    """Устанавливает пакет через pip"""
+    subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+
+# Проверяем telethon
+if importlib.util.find_spec("telethon") is None:
+    print("📦 Устанавливаю telethon...")
+    install_package("telethon==1.42.0")
+
+# Проверяем aiogram
+if importlib.util.find_spec("aiogram") is None:
+    print("📦 Устанавливаю aiogram...")
+    install_package("aiogram==3.24.0")
+
+# Теперь можно импортировать
 from datetime import datetime, timedelta, timezone
 from telethon import TelegramClient
 from aiogram import Bot, Dispatcher, types
@@ -66,7 +86,7 @@ async def process_count(message: types.Message, state: FSMContext):
                 f"🔥 **Самый популярный пост в {link}**\n"
                 f"📊 Реакций: {max_reac}\n\n"
                 f"{best_post.text[:800] if best_post.text else '[Медиа без текста]'}\n\n"
-                f"🔗 [Ссылка на оригинал](https://t.me{link.split('/')[-1]}/{best_post.id})"
+                f"🔗 [Ссылка на оригинал](https://t.me/{link.split('/')[-1]}/{best_post.id})"
             )
             await message.answer(text, parse_mode="Markdown")
         else:
